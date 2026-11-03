@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Add your club</h1>
+  <p>Submit the listing for review. It appears in the directory after an admin approves it.</p>
+</section>
+<form class="stack-form" method="post">
+  <label>Name <input name="name" required></label>
+  <label>Category
+    <select name="category" required>
+      {% for category in categories %}<option>{{ category }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Sub-category <input name="subcategory" placeholder="Football, reading, running"></label>
+  <label>Description <textarea name="description" required></textarea></label>
+  <label>Suburb <input name="suburb"></label>
+  <label>City <input name="city" value="Sydney"></label>
+  <label>Meeting location <input name="meeting_location"></label>
+  <label>Meeting days
+    <select name="meeting_days">
+      <option value="">Not listed</option>
+      {% for day in days %}<option>{{ day }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Meeting time <input name="meeting_time" placeholder="6:30 PM"></label>
+  <label>Contact email <input type="email" name="contact_email"></label>
+  <label>Website <input name="website_url" placeholder="https://"></label>
+  <label>Instagram <input name="instagram_url" placeholder="https://instagram.com/"></label>
+  <label>Facebook group <input name="facebook_url" placeholder="https://facebook.com/groups/"></label>
+  <label>WhatsApp number <input name="whatsapp" placeholder="+61..."></label>
+  <label>Logo or photo URL <input name="image_url" placeholder="https://"></label>
+  <label>Price
+    <select name="price">
+      <option value="">Not listed</option>
+      <option>Free</option>
+      <option>Paid</option>
+    </select>
+  </label>
+  <label>Age group
+    <select name="age_group">
+      <option value="">Not listed</option>
+      <option>All ages</option>
+      <option>Juniors</option>
+      <option>Adults</option>
+      <option>Seniors</option>
+    </select>
+  </label>
+  <label>Who it's for
+    <select name="audience">
+      <option value="">Not listed</option>
+      <option>Mixed</option>
+      <option>Women-only</option>
+      <option>Men-only</option>
+    </select>
+  </label>
+  <label class="check"><input type="checkbox" name="beginner_friendly" value="yes"> Beginner-friendly</label>
+  <button type="submit">Submit for review</button>
+</form>
+{% endblock %}

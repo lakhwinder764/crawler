@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Admin</h1>
+  <form method="post" action="{{ url_for('admin_logout') }}"><button type="submit">Log out</button></form>
+</section>
+<section class="stats">
+  <p>{{ stats.published }} published</p>
+  <p>{{ stats.pending }} waiting for review</p>
+  <p>{{ stats.reviews }} reviews</p>
+  <p>{{ stats.with_map }} clubs on the map</p>
+</section>
+<h2>Categories</h2>
+<ul class="stats">
+  {% for category, count in stats.categories.items() %}
+    <li>{{ category }}: {{ count }}</li>
+  {% endfor %}
+</ul>
+
+<h2>Waiting for review</h2>
+{% if pending %}
+  {% for club in pending %}
+    <article class="admin-row">
+      <h3>{{ club.name }}</h3>
+      <p>{{ club.category }} · {{ club.suburb }} {{ club.city }}</p>
+      <p>{{ club.description }}</p>
+      <form method="post" action="{{ url_for('approve', slug=club.id) }}"><button type="submit">Approve and verify</button></form>
+      <form method="post" action="{{ url_for('hide', slug=club.id) }}"><button type="submit">Remove</button></form>
+    </article>
+  {% endfor %}
+{% else %}
+  <p>No clubs are waiting.</p>
+{% endif %}
+
+<h2>Published clubs</h2>
+{% for club in clubs %}
+  <details class="admin-row">
+    <summary>{{ club.name }} · {{ club.category }}{% if club.verified %} · Verified{% endif %}</summary>
+    <form method="post" action="{{ url_for('edit', slug=club.id) }}" class="stack-form">
+      <label>Name <input name="name" value="{{ club.name }}"></label>
+      <label>Category
+        <select name="category">
+          {% for category in categories %}
+            <option {% if club.category == category %}selected{% endif %}>{{ category }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Sub-category <input name="subcategory" value="{{ club.subcategory }}"></label>
+      <label>Description <textarea name="description">{{ club.description }}</textarea></label>
+      <label>Suburb <input name="suburb" value="{{ club.suburb }}"></label>
+      <label>City <input name="city" value="{{ club.city }}"></label>
+      <label>Meeting location <input name="meeting_location" value="{{ club.meeting_location }}"></label>
+      <label>Meeting days <input name="meeting_days" value="{{ club.meeting_days }}"></label>
+      <label>Meeting time <input name="meeting_time" value="{{ club.meeting_time }}"></label>
+      <label>Email <input name="contact_email" value="{{ club.contact_email }}"></label>
+      <label>Website <input name="website_url" value="{{ club.website_url }}"></label>
+      <label>Instagram <input name="instagram_url" value="{{ club.instagram_url }}"></label>
+      <label>Facebook <input name="facebook_url" value="{{ club.facebook_url }}"></label>
+      <label>WhatsApp <input name="whatsapp" value="{{ club.whatsapp }}"></label>
+      <label>Price <input name="price" value="{{ club.price }}"></label>
+      <label>Age group <input name="age_group" value="{{ club.age_group }}"></label>
+      <label>Audience <input name="audience" value="{{ club.audience }}"></label>
+      <label class="check"><input type="checkbox" name="beginner_friendly" value="yes" {% if club.beginner_friendly %}checked{% endif %}> Beginner-friendly</label>
+      <label class="check"><input type="checkbox" name="verified" value="yes" {% if club.verified %}checked{% endif %}> Verified badge</label>
+      <button type="submit">Save listing</button>
+    </form>
+    <form method="post" action="{{ url_for('hide', slug=club.id) }}"><button type="submit">Remove from directory</button></form>
+  </details>
+{% endfor %}
+{% endblock %}

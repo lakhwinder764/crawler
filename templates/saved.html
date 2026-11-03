@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Saved clubs</h1>
+  <p>Favourites, clubs you follow, and bookmarked events stay in this browser.</p>
+</section>
+<section id="saved-lists">
+  <h2>Favourites</h2>
+  <ul data-list="favourite"></ul>
+  <h2>Following</h2>
+  <ul data-list="follow"></ul>
+  <h2>Bookmarked events</h2>
+  <ul data-list="event"></ul>
+</section>
+{% endblock %}

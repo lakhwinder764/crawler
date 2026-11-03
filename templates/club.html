@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block head %}
+  {% if club.lat %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  {% endif %}
+{% endblock %}
+{% block content %}
+<article class="profile">
+  {% if club.photos %}
+    <img class="hero-photo" src="{{ club.photos[0] }}" alt="" onerror="this.hidden=true">
+  {% else %}
+    <div class="photo-fallback large">{{ club.name[:1] }}</div>
+  {% endif %}
+  <p class="meta">{{ club.category }}{% if club.subcategory %} · {{ club.subcategory }}{% endif %}</p>
+  <h1>{{ club.name }}</h1>
+  {% if club.verified %}<span class="badge">Verified</span>{% endif %}
+  <p class="place">{{ club.suburb or "Sydney" }}{% if club.suburb %}, {{ club.city }}{% endif %}</p>
+  {% if club.description %}<p class="description">{{ club.description }}</p>{% endif %}
+
+  <div class="actions">
+    <button type="button" data-save="favourite" data-id="{{ club.id }}">Save</button>
+    <button type="button" data-save="follow" data-id="{{ club.id }}">Follow</button>
+  </div>
+
+  <h2>Join</h2>
+  <div class="actions">
+    {% if club.website_url %}<a class="button" href="{{ club.website_url }}" target="_blank" rel="noopener">Website</a>{% endif %}
+    {% if club.instagram_url %}<a class="button" href="{{ club.instagram_url }}" target="_blank" rel="noopener">Instagram</a>{% endif %}
+    {% if club.facebook_url %}<a class="button" href="{{ club.facebook_url }}" target="_blank" rel="noopener">Facebook</a>{% endif %}
+    {% if club.contact_email %}<a class="button" href="mailto:{{ club.contact_email }}">Email</a>{% endif %}
+    {% if club.whatsapp %}<a class="button" href="https://wa.me/{{ club.whatsapp | replace('+', '') | replace(' ', '') }}" target="_blank" rel="noopener">WhatsApp</a>{% endif %}
+  </div>
+
+  <h2>Meetings and events</h2>
+  {% if club.events %}
+    <ul class="events">
+      {% for event in club.events %}
+        <li>
+          <strong>{{ event.title }}</strong>
+          <span>{{ event.listing or "Public" }}{% if event.status %} · {{ event.status }}{% endif %}</span>
+          <span>{{ event.day }}{% if event.time %} · {{ event.time }}{% endif %}</span>
+          {% if event.location %}<span>{{ event.location }}</span>{% endif %}
+          <button type="button" data-save="event" data-id="{{ club.id }}:{{ event.id }}">Bookmark</button>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Contact the club for upcoming events.</p>
+  {% endif %}
+
+  {% if club.lat %}
+    <div id="club-pin-map" data-lat="{{ club.lat }}" data-lng="{{ club.lng }}" data-name="{{ club.name }}"></div>
+  {% endif %}
+
+  <h2>Details</h2>
+  <dl class="details">
+    {% if club.meeting_location %}<div><dt>Meeting location</dt><dd>{{ club.meeting_location }}</dd></div>{% endif %}
+    {% if club.meeting_days %}<div><dt>Meeting days</dt><dd>{{ club.meeting_days }}</dd></div>{% endif %}
+    {% if club.meeting_time %}<div><dt>Meeting time</dt><dd>{{ club.meeting_time }}</dd></div>{% endif %}
+    {% if club.price %}<div><dt>Price</dt><dd>{{ club.price }}</dd></div>{% endif %}
+    {% if club.age_group %}<div><dt>Age group</dt><dd>{{ club.age_group }}</dd></div>{% endif %}
+    {% if club.audience %}<div><dt>Who it's for</dt><dd>{{ club.audience }}</dd></div>{% endif %}
+    {% if club.beginner_friendly %}<div><dt>Beginner-friendly</dt><dd>Yes</dd></div>{% endif %}
+    {% if club.lat %}
+      <div><dt>Map</dt><dd><a href="{{ url_for('map_page') }}#{{ club.id }}">Open on the live map</a></dd></div>
+    {% endif %}
+  </dl>
+
+  <h2>Reviews</h2>
+  {% if reviews %}
+    <ul class="reviews">
+      {% for review in reviews %}
+        <li>
+          <strong>{{ review.stars }} / 5</strong> · {{ review.author }}
+          <p>{{ review.text }}</p>
+          {% if review.photo %}<img src="{{ url_for('static', filename=review.photo) }}" alt="">{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No reviews yet.</p>
+  {% endif %}
+  <form class="review-form" method="post" action="{{ url_for('add_review', slug=club.id) }}" enctype="multipart/form-data">
+    <label>Your name <input name="author" maxlength="40"></label>
+    <label>Rating
+      <select name="stars" required>
+        <option value="">Stars</option>
+        {% for star in [5, 4, 3, 2, 1] %}<option value="{{ star }}">{{ star }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Review <textarea name="text" required maxlength="600"></textarea></label>
+    <label>Photo <input type="file" name="photo" accept="image/*"></label>
+    <button type="submit">Post review</button>
+  </form>
+</article>
+{% endblock %}
+{% block scripts %}
+{% if club.lat %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='map.js') }}"></script>
+{% endif %}
+{% endblock %}

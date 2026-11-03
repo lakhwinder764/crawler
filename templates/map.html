@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block head %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
+{% block content %}
+<div class="map-shell">
+  <aside class="map-panel">
+    <h1>Clubs around Sydney</h1>
+    <p>Each pin is the club’s suburb. Your position updates while location is on.</p>
+    <button type="button" id="map-near-me">Use my location</button>
+    <ul id="nearby-list" class="nearby"></ul>
+    {% if unmapped %}
+    <details class="unmapped">
+      <summary>{{ unmapped|length }} clubs have no pin yet</summary>
+      <ul>
+        {% for club in unmapped %}
+          <li><a href="{{ url_for('club_page', slug=club.id) }}">{{ club.name }}</a></li>
+        {% endfor %}
+      </ul>
+    </details>
+    {% endif %}
+  </aside>
+  <div id="club-map"></div>
+</div>
+<script id="club-data" type="application/json">{{ clubs | tojson }}</script>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='map.js') }}"></script>
+{% endblock %}

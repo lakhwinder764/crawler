@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>That club is not listed</h1>
+  <p>The link may be out of date. Try a search from the directory.</p>
+  <a class="button" href="{{ url_for('directory') }}">Back to clubs</a>
+</section>
+{% endblock %}
